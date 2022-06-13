@@ -9,7 +9,6 @@ interface Props {
 }
 
 const HomePage: NextPage<Props> = ({ pokemons }) => {
-  console.log(pokemons);
   return (
     <Layout title="Pokedex App">
       <PokemonContainer pokemons={pokemons} />
