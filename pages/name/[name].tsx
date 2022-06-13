@@ -1,15 +1,16 @@
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { Grid, Card, Button, Container, Text, Image } from "@nextui-org/react";
 import { useState } from "react";
-import { NextPage, GetStaticPaths, GetStaticProps } from "next";
-import { Button, Card, Container, Grid, Text, Image } from "@nextui-org/react";
-import { pokeApi } from "../../api";
 import { Layout } from "../../components/layouts";
+import { existsInFavorites, toggleFavorite } from "../../utils";
 import { Pokemon } from "../../interfaces";
-import { toggleFavorite, existsInFavorites } from "../../utils";
 import confetti from "canvas-confetti";
+import { pokeApi } from "../../api";
+import { PokemonListResponse } from "../../interfaces";
 interface Props {
   pokemon: Pokemon;
 }
-const PokemonPage: NextPage<Props> = ({ pokemon }) => {
+const PokemonByNamePage: NextPage<Props> = ({ pokemon }) => {
   const [isInFavorites, setIsInFavorites] = useState(
     existsInFavorites(pokemon.id)
   );
@@ -100,18 +101,20 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
-  const pokemonsIds = [...Array(151)].map((val, index) => `${index + 1}`);
+  const { data } = await pokeApi.get<PokemonListResponse>("/pokemon?limit=151");
   return {
-    paths: pokemonsIds.map((id) => ({
-      params: { id },
+    paths: data.results.map((poke) => ({
+      params: {
+        name: poke.name,
+      },
     })),
     fallback: false,
   };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { id } = params as { id: string };
-  const { data } = await pokeApi.get<Pokemon>(`/pokemon/${id}`);
+  const { name } = params as { name: string };
+  const { data } = await pokeApi.get<Pokemon>(`/pokemon/${name}`);
 
   return {
     props: {
@@ -119,4 +122,5 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     },
   };
 };
-export default PokemonPage;
+
+export default PokemonByNamePage;

@@ -6,17 +6,12 @@ interface Props {
 }
 export const FavoritePokemonsCard: FC<Props> = ({ pokemonId }) => {
   const router = useRouter();
-  const onFavoriteClick = (id: number) => {
-    router.push(`/pokemon/${id}`);
+  const onFavoriteClick = () => {
+    router.push(`/pokemon/${pokemonId}`);
   };
   return (
     <Grid xs={6} sm={3} md={2} xl={1} key={pokemonId}>
-      <Card
-        onClick={() => onFavoriteClick(pokemonId)}
-        hoverable
-        clickable
-        css={{ padding: 10 }}
-      >
+      <Card onClick={onFavoriteClick} hoverable clickable css={{ padding: 10 }}>
         <Card.Image
           src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`}
           width={"100%"}
